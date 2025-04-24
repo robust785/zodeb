@@ -98,10 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchStats() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final leetcodeStats = await platformService
-        .fetchLeetcodeStats(userProvider.user.leetcodelink);
-    final gfgStats =
-        await platformService.fetchGFGStats(userProvider.user.gfglink);
+    final leetcodeStats = await platformService.fetchLeetcodeStats(
+        userProvider.user.leetcodelink, userProvider.user.id);
+    final gfgStats = await platformService.fetchGFGStats(
+        userProvider.user.gfglink, userProvider.user.id);
 
     if (mounted) {
       setState(() {
@@ -110,6 +110,26 @@ class _HomeScreenState extends State<HomeScreen> {
         totalSolved = leetcodeSolved + gfgSolved;
         isLoading = false;
       });
+
+      // Update the total questions in the database
+      final updated = await platformService.updateTotalQuestions(
+          userProvider.user.id, totalSolved);
+
+      if (!updated && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Failed to update total problems solved in database. Please try refreshing.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else if (mounted) {
+        // Update the user provider with the new total
+        final updatedUser =
+            userProvider.user.copyWith(totalQuestions: totalSolved);
+        userProvider.setUser(updatedUser.toJson());
+      }
     }
   }
 

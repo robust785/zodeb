@@ -17,7 +17,7 @@ class GeminiService {
   Future<String> getCodingResponse(String prompt) async {
     try {
       final query =
-          "As a coding assistant, help with the following programming question: $prompt\n\nProvide clear, concise, and practical answers with code examples when relevant.";
+          "As a coding assistant, help with the following programming question: $prompt\n\nProvide clear, concise, and practical answers with code examples when relevant.Do not answer if query not related to coding or computer science.";
 
       final response = await gemini.text(query);
 

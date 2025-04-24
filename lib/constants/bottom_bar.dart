@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zodeb/features/chatbot/screen/chatbot_screen.dart';
 import 'package:zodeb/features/home/screen/home_screen.dart';
 import 'package:zodeb/features/link%20update/screen/link_update.dart';
 import 'package:zodeb/features/rooms/screen/room_screen.dart';
+import 'package:zodeb/provider/user_provider.dart';
 
 class BottomBar extends StatefulWidget {
   static const String routeName = '/bottom-nav-bar';
@@ -15,26 +17,33 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  List<Widget> pages = [
-    const HomeScreen(),
-    const RoomScreen(),
-    const ChatbotScreen(),
-    const LinkUpdate(),
-  ];
+  List<Widget> pages = [];
   int _page = 0;
   double bottomBarWidth = 42;
   double bottomBarBorderWidth = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePages();
+    debugPrint("inside bt nav bar");
+  }
+
+  void _initializePages() {
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    pages = [
+      const HomeScreen(),
+      RoomScreen(currentUser: user.name),
+      const ChatbotScreen(),
+      const LinkUpdate(),
+    ];
+  }
+
   void setPage(int p) {
     setState(() {
       _page = p;
       debugPrint("Current Page Index: $_page");
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    debugPrint("inside bt nav bar");
   }
 
   @override

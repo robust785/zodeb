@@ -16,19 +16,22 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const BottomBar(),
       );
     case RoomDetailsScreen.routeName:
-      final room = routeSettings.arguments as Map<String, dynamic>;
+      final args = routeSettings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => RoomDetailsScreen(room: room),
+        builder: (_) => RoomDetailsScreen(
+          room: args,
+          currentUser: args['currentUser'],
+        ),
       );
     default:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) {
-          return const Scaffold(
-            body: Center(child: Column(children: [Text("Error occured.")])),
-          );
-        },
+        builder: (_) => const Scaffold(
+          body: Center(
+            child: Text('Screen does not exist!'),
+          ),
+        ),
       );
   }
 }

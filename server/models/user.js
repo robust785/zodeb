@@ -69,6 +69,11 @@ const userSchema=mongoose.Schema(
     type:{
         type:String,
         default:"user"   
+    },
+    totalQuestions: {
+        type: Number,
+        default: 0,
+        required: false
     }
 
 });

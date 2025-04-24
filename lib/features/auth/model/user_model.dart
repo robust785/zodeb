@@ -13,6 +13,7 @@ class UserModel {
   final String photo;
 
   final String type;
+  final int totalQuestions;
   final String token;
 
   UserModel({
@@ -24,6 +25,7 @@ class UserModel {
     this.gfglink,
     this.codeforceslink,
     this.codecheflink,
+    this.totalQuestions = 0,
     required this.photo,
     required this.type,
     required this.token,
@@ -39,6 +41,7 @@ class UserModel {
     String? codeforceslink,
     String? codecheflink,
     String? photo,
+    int totalQuestions = 0,
     String? type,
     String? token,
   }) {
@@ -53,13 +56,14 @@ class UserModel {
       codecheflink: codecheflink ?? this.codecheflink,
       photo: photo ?? this.photo,
       type: type ?? this.type,
+      totalQuestions: this.totalQuestions,
       token: token ?? this.token,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
+      '_id': id,
       'name': name,
       'email': email,
       'password': password,
@@ -68,6 +72,7 @@ class UserModel {
       'codeforceslink': codeforceslink,
       'codecheflink': codecheflink,
       'profilePhoto': photo,
+      'totalQuestions': totalQuestions,
       'type': type,
       'token': token,
     };
@@ -83,6 +88,7 @@ class UserModel {
       gfglink: map['gfglink']?.toString() ?? '',
       codeforceslink: map['codeforceslink']?.toString() ?? '',
       codecheflink: map['codecheflink']?.toString() ?? '',
+      totalQuestions: map['totalQuestions']?.toInt() ?? 0,
       photo: map['photo']?.toString() ?? '',
       type: map['type']?.toString() ?? 'user',
       token: map['token']?.toString() ?? '',

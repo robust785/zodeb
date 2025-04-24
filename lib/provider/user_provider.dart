@@ -13,6 +13,7 @@ class UserProvider extends ChangeNotifier {
     codecheflink: "",
     codeforceslink: "",
     type: "",
+    totalQuestions: 0,
     token: "",
   );
 

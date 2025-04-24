@@ -1,11 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
+const express = require('express');
+const mongoose = require('mongoose');
 const UserModel = require("./models/user");
+const Room = require("./models/room");
 const auth_middleware = require("./middleware/auth_middleware");
 const cors = require("cors");
 
 const auth = require("./routes/auth.js");
-
+const roomRoutes = require("./routes/room.js");
 
 const app = express();
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(cors());  // Move CORS middleware before other middleware
 app.use(express.json());
 app.use(auth);
+app.use(roomRoutes);
 
 
 app.get("/about",(req,res)=>{
@@ -97,6 +99,49 @@ app.post("/api/update-links", auth_middleware, async (req, res) => {
   } catch (error) {
     console.error("Error updating links:", error.message);
     res.status(500).json({ error: "Failed to update links" });
+  }
+});
+
+// Endpoint: POST /api/user/update-questions
+app.post("/api/user/update-questions", auth_middleware, async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const { userId, totalQuestions } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ msg: "User ID is required" });
+    }
+
+    // First update the user - use new keyword when creating ObjectId
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      new mongoose.Types.ObjectId(userId),
+      { totalQuestions },
+      { new: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Then update all rooms where this user is a member
+    const rooms = await Room.find({ 'members.name': updatedUser.name });
+    
+    // Update each room
+    const updatePromises = rooms.map(async (room) => {
+      const memberIndex = room.members.findIndex(m => m.name === updatedUser.name);
+      if (memberIndex !== -1) {
+        room.members[memberIndex].totalQuestions = totalQuestions;
+        await room.save();
+      }
+    });
+
+    // Wait for all room updates to complete
+    await Promise.all(updatePromises);
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error updating total questions:", error.message);
+    res.status(500).json({ msg: "Error updating total questions" });
   }
 });
 

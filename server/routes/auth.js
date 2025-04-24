@@ -9,7 +9,7 @@ authRouter.post('/api/signup',async(req,res)=>{ //request=user provides and resp
     try{
 
         //GET DATA FROM CLIENT
-        const {name,email,password,photo,leetcodelink,gfglink,codeforceslink,codecheflink,type} =req.body;
+        const {name,email,password,photo,leetcodelink,gfglink,codeforceslink,codecheflink,totalQuestions,type} =req.body;
         //before posting data into Db we have to validate the data (like is email valid)
         const existingUser=await UserModel.findOne({email:email});
         if(existingUser)
@@ -20,7 +20,7 @@ authRouter.post('/api/signup',async(req,res)=>{ //request=user provides and resp
        
             //POST DATA IN DB
             
-            let user=new UserModel({name,email,password,photo,leetcodelink,gfglink,codeforceslink,codecheflink,type});
+            let user=new UserModel({name,email,password,photo,leetcodelink,gfglink,codeforceslink,codecheflink,totalQuestions,type});
             user=await user.save();
             
             //RETURN SUCCESS MSG   
